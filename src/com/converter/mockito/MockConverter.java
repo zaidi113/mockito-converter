@@ -39,12 +39,12 @@ public class MockConverter {
 
     public static void main(String[] args) {
 
-        String line1 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\").with(eq(ANYTHING), ANYTHING, isA(\"TEST\")).will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
+        String line1 = "mockReference.stubs().method(\"findDesc\").with(eq(data.test(x)), ANYTHING, isA(\"TEST\")).will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
         String line2 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\").will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
         String line3 = "private Mock someThing = mock(MyClass.class, \"xxxx\");";
 
         MockConverter mockConverter = new MockConverter();
-        List<String> mockitoLines = mockConverter.convert(asList(line1, line2, line3));
+        List<String> mockitoLines = mockConverter.convert(asList(line1));
 
         for (String mockitoLine : mockitoLines) {
             System.out.println(mockitoLine);

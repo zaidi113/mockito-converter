@@ -51,15 +51,18 @@ public class ExpectationConverter implements MConverter{
     public static void main(String[] args) {
 
         String line1 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\").with(eq(ANYTHING), ANYTHING, isA(\"TEST\")).will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
-        String line2 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\").will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
+        String line2 = "mockReferenceDataRepository.stubs().method(\"findDesc\").will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
 //        String mockLine = "private Mock something = mock(Something.class, \"Blahhh\");";
         ExpectationConverter mockConverter = new ExpectationConverter();
-
+//
         for (String jmock : asList(line1, line2)) {
             for (String mockito : mockConverter.convert(jmock)) {
                 System.out.println(mockito);
             }
         }
+
+
+        System.out.println(mockConverter.extractMethodParams("with(eq(some.method()), isA(anything))").getSecond().getExpectation());
     }
 
     private Pair<String, ConversionResult> extractObjectName(String line){
@@ -106,49 +109,47 @@ public class ExpectationConverter implements MConverter{
      */
     private Pair<String, ConversionResult> extractMethodParams(String line){
 
+
+//        "with(eq(some.method()), isA(anything))"
+
         StringBuilder expectation = new StringBuilder();
         StringBuilder verification = new StringBuilder();
 
         //remove everything from start of method(
         int methodParamStartIndex = line.indexOf("with");
 
-        int methodParamEndIndex = 0;
-        if(methodParamStartIndex > 0 ) {
+        int paramIndex = 0;
+        if(methodParamStartIndex > -1 ) {
 
             line = line.substring(methodParamStartIndex);
             line = line.substring(line.indexOf("("));
 
-            boolean matcherInProgress = false;
-            StringBuffer paramBuilder = new StringBuffer();
+            boolean allParametersFound = false;
+            int beginParen = 0;
 
-            boolean parameters = true;
+            while (!allParametersFound) {
 
-            while (parameters) {
+                char c = line.charAt(paramIndex);
 
-                char c = line.charAt(methodParamEndIndex);
-                paramBuilder.append(c);
                 if (c == '(') {
-                    matcherInProgress = true;
+                    beginParen++;
                 }
 
                 if (c == ')') {
-
-                    if (!matcherInProgress) {
-                        parameters = false;
-                    } else {
-                        matcherInProgress = false;
-                    }
+                    beginParen--;
                 }
-
-                methodParamEndIndex++;
+                if(beginParen == 0){
+                    allParametersFound = true;
+                }
+                paramIndex++;
             }
 
-            String params = line.substring(0, methodParamEndIndex);
+            String params = line.substring(0, paramIndex);
             expectation.append(params);
             verification.append(params);
         }
 
-        return buildResult(line.substring(methodParamEndIndex), expectation, verification);
+        return buildResult(line.substring(paramIndex), expectation, verification);
     }
 
     /**
