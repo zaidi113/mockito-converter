@@ -8,6 +8,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.util.PsiUtil;
 
 import java.util.List;
 
@@ -19,11 +23,22 @@ import static java.util.Arrays.asList;
 public class MockitoConverterAction extends AnAction {
 
     private final MockConverter converter;
+    private FieldsConverter fieldsConverter = new FieldsConverter();
+
     public MockitoConverterAction() {
         converter = new MockConverter();
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
+
+        PsiJavaFile psiJavaFile = (PsiJavaFile) anActionEvent.getDataContext().getData(CommonDataKeys.PSI_FILE.getName());
+
+        PsiClass psiClass = getUnitTestClass(psiJavaFile);
+        System.out.println("TESTS");
+
+        PsiField[] allFields = psiClass.getAllFields();
+        fieldsConverter.convert(allFields);
+
 
         //Get all the required data from data keys
         final Editor editor = anActionEvent.getRequiredData(CommonDataKeys.EDITOR);
@@ -47,6 +62,15 @@ public class MockitoConverterAction extends AnAction {
         //Making the replacement
         WriteCommandAction.runWriteCommandAction(project, runnable);
         selectionModel.removeSelection();
+    }
+
+    public static PsiClass getUnitTestClass(PsiJavaFile psiJavaFile) {
+        for (PsiClass psiClass : psiJavaFile.getClasses()) {
+            if (!PsiUtil.isInnerClass(psiClass) && !PsiUtil.isAbstractClass(psiClass)) {
+                return psiClass;
+            }
+        }
+        throw new IllegalStateException("Could not find a unit test class in file: " + psiJavaFile.getName());
     }
 
     private String convertSelection(SelectionModel selectionModel){
