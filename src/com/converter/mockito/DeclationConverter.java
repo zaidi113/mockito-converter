@@ -14,7 +14,7 @@ public class DeclationConverter implements MConverter{
 //    public List<String> generateMockito(List<String> jMockLines){
 //        List<String> res = new ArrayList<String>();
 //        for (String mockLine : jMockLines) {
-//            res.add(convert(mockLine));
+//            res.add(annotate(mockLine));
 //        }
 //        return res;
 //
