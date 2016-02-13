@@ -1,5 +1,6 @@
 package com.converter.mockito;
 
+import com.google.common.base.Optional;
 import com.intellij.openapi.util.Pair;
 
 import java.util.ArrayList;
@@ -12,39 +13,44 @@ import static java.util.Arrays.asList;
  */
 public class ExpectationConverter implements MConverter{
 
-    public List<String> convert(String jmockCode){
+    public Optional<ConversionResult> convert(String code){
 
-        List<String> result = new ArrayList<String>();
+        if(!code.contains(".method(")){
+            return Optional.absent();
+        }
 
-        Pair<String, ConversionResult> objectNameBit = extractObjectName(jmockCode);
+
+        Pair<String, ConversionResult> objectNameBit = extractObjectName(code);
         Pair<String, ConversionResult> methodNameBit = extractMethodName(objectNameBit.first);
         Pair<String, ConversionResult> parametersBit = extractMethodParams(methodNameBit.first);
         Pair<String, ConversionResult> returnBit = extractReturn(parametersBit.first);
 
-        result.add(new StringBuilder("when").
+        String exp = (new StringBuilder("when").
                 append("(").
-                append(objectNameBit.getSecond().getExpectation().toString()).
+                append(objectNameBit.getSecond().getExpectation()).
                 append(".").
-                append(methodNameBit.getSecond().getExpectation().toString()).
+                append(methodNameBit.getSecond().getExpectation()).
                 append("(").
-                append(parametersBit.getSecond().getExpectation().toString()).
+                append(parametersBit.getSecond().getExpectation()).
                 append(")").
-                append(")").
-                append(returnBit.getSecond().getExpectation().toString())
-                .append(";").toString());
-
-        result.add(new StringBuilder("verify").
-                append("(").
-                append(objectNameBit.getSecond().getExpectation().toString()).
                 append(")").
                 append(".").
-                append(methodNameBit.getSecond().getExpectation().toString()).
-                append("(").
-                append(parametersBit.getSecond().getExpectation().toString()).
+                append(returnBit.getSecond().getExpectation()).
                 append(")").
                 append(";").toString());
 
-        return result;
+        String ver = (new StringBuilder("verify").
+                append("(").
+                append(objectNameBit.getSecond().getExpectation()).
+                append(")").
+                append(".").
+                append(methodNameBit.getSecond().getExpectation()).
+                append("(").
+                append(parametersBit.getSecond().getExpectation()).
+                append(")").
+                append(";").toString());
+
+        return Optional.of(new ConversionResult(exp, ver));
 
     }
 
@@ -56,8 +62,10 @@ public class ExpectationConverter implements MConverter{
         ExpectationConverter mockConverter = new ExpectationConverter();
 //
         for (String jmock : asList(line1, line2)) {
-            for (String mockito : mockConverter.convert(jmock)) {
-                System.out.println(mockito);
+            Optional<ConversionResult> resultOptional = mockConverter.convert(jmock);
+            if(resultOptional.isPresent()){
+                System.out.println(resultOptional.get().getExpectation());
+                System.out.println(resultOptional.get().getVerification());
             }
         }
 
@@ -109,6 +117,9 @@ public class ExpectationConverter implements MConverter{
      */
     private Pair<String, ConversionResult> extractMethodParams(String line){
 
+        if(!line.contains("with(")){
+            return emptyResult(line);
+        }
 
 //        "with(eq(some.method()), isA(anything))"
 
@@ -116,40 +127,45 @@ public class ExpectationConverter implements MConverter{
         StringBuilder verification = new StringBuilder();
 
         //remove everything from start of method(
-        int methodParamStartIndex = line.indexOf("with");
+        String[] splitStrings = line.split("with\\(");
+        if(splitStrings != null && splitStrings.length > 0){
 
-        int paramIndex = 0;
-        if(methodParamStartIndex > -1 ) {
+            String stringWithParameters = splitStrings[1];
+            if(stringWithParameters.charAt(0) == ')') //no parameters specified
+                return emptyResult(line);
 
-            line = line.substring(methodParamStartIndex);
-            line = line.substring(line.indexOf("("));
 
-            boolean allParametersFound = false;
-            int beginParen = 0;
+            int paramIndex = 0;
 
-            while (!allParametersFound) {
+                boolean allParametersFound = false;
+                int beginParen = 1; //this is one because we have a bracket for with(.
+                StringBuilder paramBuilder = new StringBuilder();
 
-                char c = line.charAt(paramIndex);
+                while (beginParen != 0) {
 
-                if (c == '(') {
-                    beginParen++;
+                    char c = stringWithParameters.charAt(paramIndex);
+
+                    if (c == '(') {
+                        beginParen++;
+                    }
+
+                    if (c == ')') {
+                        beginParen--;
+                    }
+
+                    if(beginParen != 0){
+                        paramBuilder.append(c);
+                        paramIndex++;
+                    }
+
                 }
 
-                if (c == ')') {
-                    beginParen--;
-                }
-                if(beginParen == 0){
-                    allParametersFound = true;
-                }
-                paramIndex++;
-            }
+                expectation.append(paramBuilder.toString());
+                verification.append(paramBuilder.toString());
 
-            String params = line.substring(0, paramIndex);
-            expectation.append(params);
-            verification.append(params);
+                return buildResult(stringWithParameters.substring(paramIndex), expectation, verification);
         }
-
-        return buildResult(line.substring(paramIndex), expectation, verification);
+        return emptyResult(line);
     }
 
     /**
@@ -162,46 +178,41 @@ public class ExpectationConverter implements MConverter{
         StringBuilder expectation = new StringBuilder();
 
         if(line.contains("returnValue")){
-            int returnStartIndex = line.indexOf("returnValue");
+            String stringWithReturnValue = line.split("returnValue\\(")[1];
 
-            line = line.substring(returnStartIndex);
-            line = line.substring(line.indexOf("("));
+//            line = line.substring(stringWithReturnValue);
+//            line = line.substring(line.indexOf("("));
 
-            expectation.append(".");
             expectation.append("thenReturn(");
-            expectation.append(readBetweenParenthesis(line));
-            expectation.append(")");
+            expectation.append(readBetweenParenthesis(stringWithReturnValue));
+
         }
         return buildResult(line, expectation, new StringBuilder());
     }
 
     private String readBetweenParenthesis(String line){
 
-        boolean canContinue = true;
-        boolean anySubParenthesis = false;
-
-
         StringBuilder buffer = new StringBuilder();
 
-        int endParenthesis = 0;
-        while(canContinue) {
+        int paranthesis = 1;
+        int charCount=0;
+        while(paranthesis != 0) {
 
-            char c = line.charAt(endParenthesis);
-            buffer.append(c);
+            char c = line.charAt(charCount);
+
             if(c == '(') {
-                anySubParenthesis = true;
+                paranthesis++;
             }
 
             if(c == ')'){
-
-                if(!anySubParenthesis){
-                    canContinue = false;
-                }else {
-                    anySubParenthesis = false;
-                }
+                paranthesis--;
             }
 
-            endParenthesis++;
+            if(paranthesis != 0){
+                buffer.append(c);
+            }
+
+            charCount++;
         }
 
         return buffer.toString();
@@ -209,10 +220,14 @@ public class ExpectationConverter implements MConverter{
     }
 
     private Pair<String, ConversionResult> buildResult(String line, StringBuilder expectation, StringBuilder verification){
-        return Pair.create(line, new ConversionResult(expectation, verification));
+        return Pair.create(line, new ConversionResult(expectation.toString(), verification.toString()));
     }
 
     private Pair<String, ConversionResult> emptyResult(){
-        return Pair.create("", new ConversionResult(new StringBuilder(), new StringBuilder()));
+        return Pair.create("", new ConversionResult("", ""));
+    }
+
+    private Pair<String, ConversionResult> emptyResult(String remainingLine){
+        return Pair.create(remainingLine, new ConversionResult("", ""));
     }
 }

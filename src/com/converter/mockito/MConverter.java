@@ -1,5 +1,7 @@
 package com.converter.mockito;
 
+import com.google.common.base.Optional;
+
 import java.util.List;
 
 /**
@@ -7,5 +9,5 @@ import java.util.List;
  */
 public interface MConverter {
 
-    List<String> convert(String jmockCode);
+    Optional<ConversionResult> convert(String jmockCode);
 }

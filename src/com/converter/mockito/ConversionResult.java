@@ -5,19 +5,19 @@ package com.converter.mockito;
  */
 public class ConversionResult {
 
-    private StringBuilder expectation;
-    private StringBuilder verification;
+    private String expectation;
+    private String verification;
 
-    public ConversionResult(StringBuilder expectation, StringBuilder verification) {
+    public ConversionResult(String expectation, String verification) {
         this.expectation = expectation;
         this.verification = verification;
     }
 
-    public StringBuilder getExpectation() {
+    public String getExpectation() {
         return expectation;
     }
 
-    public StringBuilder getVerification() {
+    public String getVerification() {
         return verification;
     }
 }

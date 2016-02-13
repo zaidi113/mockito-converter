@@ -22,12 +22,8 @@ import static java.util.Arrays.asList;
  */
 public class MockitoConverterAction extends EditorAction {
 
-    private final MockConverter converter;
-    private FieldsConverter fieldsConverter = new FieldsConverter();
-
     public MockitoConverterAction() {
         super(new MockitoConverterActionHandler());
-        converter = new MockConverter();
     }
 
 

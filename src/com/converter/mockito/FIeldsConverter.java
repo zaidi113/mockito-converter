@@ -1,6 +1,8 @@
 package com.converter.mockito;
 
-import com.intellij.psi.PsiField;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PsiFieldImpl;
+import com.intellij.psi.util.PsiUtil;
 
 import java.util.List;
 
@@ -11,43 +13,22 @@ import static java.util.Arrays.asList;
  */
 public class FieldsConverter {
 
-    private String SPACE = " ";
+    public void convert(PsiClass psiClass, JavaPsiFacade javaPsiFacade){
 
-    public List<String> convert(PsiField[] fields){
-
-
-        for (PsiField field : fields) {
-            field.getNameIdentifier();
+        for (PsiField field : psiClass.getFields()) {
+            if(field.getType().getCanonicalText().contains("Mock")) {
+                PsiExpression psiExpression = field.getInitializer();
+                PsiClass classType = extractClassName(psiExpression.getText(), javaPsiFacade);
+                field.getParent().add(PsiUtils.createPsiField(field.getName(), "Mock", classType).get());
+                field.delete();
+            }
         }
-        String className = extractClassName("");
-        String instanceVariableNameBit = extractInstanceVariableName("");
-
-        return asList(new StringBuilder("@Mock").append("\n").
-                append("private").append(SPACE).
-                append(className).append(SPACE).
-                append(instanceVariableNameBit).
-                append(";").toString());
-
     }
 
-    private String extractClassName(String mockLine){
+    private PsiClass extractClassName(String mockLine, JavaPsiFacade javaPsiFacade){
         String strContainingClassName = mockLine.substring(mockLine.indexOf("mock(")+5);
-        return strContainingClassName.substring(0, strContainingClassName.indexOf(".class"));
-    }
+        String className = strContainingClassName.substring(0, strContainingClassName.indexOf(".class"));
 
-    private String extractInstanceVariableName(String mockLine){
-        String strBeginingWithInstanceVarName = mockLine.substring(mockLine.indexOf("Mock")+4);
-        return strBeginingWithInstanceVarName.substring(0, strBeginingWithInstanceVarName.indexOf("=")).trim();
+        return PsiUtils.createPsiClass(className, javaPsiFacade);
     }
-//
-//
-//    public static void main(String[] args) {
-//        FieldsConverter declationConverter = new FieldsConverter();
-//        String jmock = "private Mock someThing = mock(MyClass.class, \"xxxx\");";
-//        System.out.println("indx of Mock" + jmock.indexOf("Mock"));
-//        List<String> mockito = declationConverter.convert(jmock);
-//        for (String m : mockito) {
-//            System.out.println(m);
-//        }
-//    }
 }

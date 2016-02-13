@@ -1,5 +1,7 @@
 package com.converter.mockito;
 
+import com.google.common.base.Optional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +22,9 @@ public class DeclationConverter implements MConverter{
 //
 //    }
 
-    public List<String> convert(String jmockLine){
+    public Optional<ConversionResult> convert(String jmockLine){
 
-        String className = extractClassName(jmockLine);
-        String instanceVariableNameBit = extractInstanceVariableName(jmockLine);
-
-        return asList(new StringBuilder("@Mock").append("\n").
-                append("private").append(SPACE).
-                append(className).append(SPACE).
-                append(instanceVariableNameBit).
-                append(";").toString());
+        throw new IllegalStateException("Not Implemented Yet");
 
     }
 
@@ -43,14 +38,4 @@ public class DeclationConverter implements MConverter{
         return strBeginingWithInstanceVarName.substring(0, strBeginingWithInstanceVarName.indexOf("=")).trim();
     }
 
-
-    public static void main(String[] args) {
-        DeclationConverter declationConverter = new DeclationConverter();
-        String jmock = "private Mock someThing = mock(MyClass.class, \"xxxx\");";
-        System.out.println("indx of Mock" + jmock.indexOf("Mock"));
-        List<String> mockito = declationConverter.convert(jmock);
-        for (String m : mockito) {
-            System.out.println(m);
-        }
-    }
 }
