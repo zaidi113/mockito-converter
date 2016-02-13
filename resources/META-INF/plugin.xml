@@ -2,11 +2,11 @@
   <id>com.converter.plugin.mockito</id>
   <name>JMOckToMockito</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="r.muhammad@sky.com" url="http://www.yourcompany.com">Zaidis Consulting Ltd.</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Converts Unit tests written using JMock ver(1) into Mockito Tests.<br/>
+      Adds all the missing imports, annotations, changes the Fields and generated Mockito expections and verifications.
     ]]></description>
 
   <change-notes><![CDATA[
@@ -30,7 +30,7 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="com.converter.mockito" class="com.converter.mockito.MockitoConverterAction" text="JMock to Mockito"
+    <action id="com.converter.mockito" class="com.converter.mockito.MockitoConverterAction" text="JMock v1 to Mockito"
             description="Converts JMock Expectations Into Mockito Equivalent">
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta K"/>
     </action>
