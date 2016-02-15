@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
  */
 public class ImportsInjector {
 
-    public static final List<String> imports = asList("org.mockito.Mock", "org.junit.Test");
+    public static final List<String> imports = asList("org.mockito.Mock", "org.junit.Test", "org.junit.Before", "org.junit.After");
     public static final String MOCKITO_FULLY_QUALIFIED_CLASS_NAME = "org.mockito.Mockito";
     public static final String GROUPED_MOCKITO_STATIC_IMPORT = MOCKITO_FULLY_QUALIFIED_CLASS_NAME + ".*";
     public static final List<String> importsToBeDeleted = asList("org.jmock.Mock");

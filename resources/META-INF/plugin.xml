@@ -32,7 +32,7 @@
     <!-- Add your actions here -->
     <action id="com.converter.mockito" class="com.converter.mockito.MockitoConverterAction" text="JMock v1 to Mockito"
             description="Converts JMock Expectations Into Mockito Equivalent">
-      <keyboard-shortcut keymap="$default" first-keystroke="ctrl meta K"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt kSupport "/>
     </action>
   </actions>
 
