@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.util.PsiUtil;
 
 /**
  * Created by muhammadraza on 26/01/2016
@@ -35,7 +34,7 @@ public class FullClassMockConverter {
         ImportsInjector.inject(psiJavaFile, importOrganizer);
         classAnnotation.annotate(importOrganizer, psiJavaFile);
 
-        fieldsConverter.convert(psiClass, javaPsiFacade);
+        fieldsConverter.convert(psiClass);
         methodsConverter.convert(psiClass, javaPsiFacade);
 
     }

@@ -34,9 +34,7 @@ public class ExpectationConverter implements MConverter{
                 append(parametersBit.getSecond().getExpectation()).
                 append(")").
                 append(")").
-                append(".").
                 append(returnBit.getSecond().getExpectation()).
-                append(")").
                 append(";").toString());
 
         String ver = (new StringBuilder("verify").
@@ -183,8 +181,9 @@ public class ExpectationConverter implements MConverter{
 //            line = line.substring(stringWithReturnValue);
 //            line = line.substring(line.indexOf("("));
 
-            expectation.append("thenReturn(");
+            expectation.append(".thenReturn(");
             expectation.append(readBetweenParenthesis(stringWithReturnValue));
+            expectation.append(")");
 
         }
         return buildResult(line, expectation, new StringBuilder());

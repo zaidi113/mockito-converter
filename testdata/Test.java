@@ -53,7 +53,7 @@ public class TestWrittenInJMock {
 }
 -------- Mixed Statements - Order should be kept
 
-        import org.jmock.Mock;
+import org.jmock.Mock;
 
 /**
  * Created by muhammadraza on 07/02/2016.
@@ -69,7 +69,7 @@ public class TestWrittenInJMock {
 
         String fname = "First Name";
 
-        barObject.stubs().method("barMethod").with(eq("TEST")).will(returnValue("AA"));
+        barObject.stubs().method("barMethod").with(eq("TEST"));
         int x = 45;
         barObject.stubs().method("barMethod").will(returnValue("AA"));
         String lname = "Last Name";
@@ -82,7 +82,7 @@ public class TestWrittenInJMock {
 
 --------
 
-
+◊
         import org.jmock.Mock;
         import org.jmock.MockObjectTestCase;
 
