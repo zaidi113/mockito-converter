@@ -36,15 +36,20 @@ public class SelectionBasedMockConverter {
         String[] jmockCodeLines = selectionModel.getSelectedText().split("\n");
 
         List<String> mocikitoLines = new ArrayList<String>();
-        for (String jmockLine : jmockCodeLines) {
+        for (String code : jmockCodeLines) {
 
-            if(jmockLine.contains(".method")){
-                Optional<ConversionResult> resultOptional = expectationConverter.convert(jmockLine);
+            if(code.contains(".method(")){
+                Optional<ConversionResult> resultOptional = expectationConverter.convert(code);
                 mocikitoLines.addAll(extractResultLines(resultOptional));
-            }else {
-                Optional<ConversionResult> resultOptional = declationConverter.convert(jmockLine);
-                mocikitoLines.addAll(extractResultLines(resultOptional));
+
+            }else{
+                mocikitoLines.add(code);
             }
+            //TODO: Field Selection Conversion..
+//            else {
+//                Optional<ConversionResult> resultOptional = declationConverter.convert(jmockLine);
+//                mocikitoLines.addAll(extractResultLines(resultOptional));
+//            }
         }
 
         int start = selectionModel.getSelectionStart();

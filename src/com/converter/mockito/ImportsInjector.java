@@ -10,9 +10,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 /**
- * Inserts code for static imports for Mockito.
- * <p/>
- * Created by przemek on 8/10/15.
+ * Created by muhammadraza on 01/02/2016.
  */
 public class ImportsInjector {
 

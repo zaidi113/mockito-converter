@@ -1,6 +1,8 @@
 package com.converter.mockito;
 
 import com.google.common.base.Optional;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,6 @@ public class DeclationConverter implements MConverter{
 //    }
 
     public Optional<ConversionResult> convert(String jmockLine){
-
         throw new IllegalStateException("Not Implemented Yet");
 
     }
