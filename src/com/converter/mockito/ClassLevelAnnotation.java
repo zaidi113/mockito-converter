@@ -27,7 +27,7 @@ public class ClassLevelAnnotation {
 
     private boolean hasRunWithAnnotation(PsiAnnotation[] psiAnnotations){
         for (PsiAnnotation annotation : psiAnnotations) {
-            if(annotation.getText().startsWith("RunWith")){
+            if(annotation.getText().startsWith("@RunWith")){
                 return true;
             }
         }

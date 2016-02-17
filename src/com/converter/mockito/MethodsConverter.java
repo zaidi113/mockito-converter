@@ -15,6 +15,7 @@ public class MethodsConverter {
 
     private static String TEST_ANNOTATION = "Test";
     private static String BEFORE_ANNOTATION = "Before";
+    private static String OVERRIDE_ANNOTATION = "Override";
     private static String AFTER_ANNOTATION = "After";
     private final List<String> supportedMethods = asList("test", "setup", "teardown");
     private final ExpectationConverter expectationConverter = new ExpectationConverter();
@@ -72,8 +73,11 @@ public class MethodsConverter {
         if(methodName.toLowerCase().startsWith("test")){
             annotate(modifierList, TEST_ANNOTATION);
         }else if(methodName.toLowerCase().startsWith("setup")){
+            method.getModifierList().setModifierProperty("public", true);
+            removeAnnotation(modifierList, OVERRIDE_ANNOTATION);
             annotate(modifierList, BEFORE_ANNOTATION);
         }else if(methodName.toLowerCase().startsWith("teardown")){
+            method.getModifierList().setModifierProperty("public", true);
             annotate(modifierList, AFTER_ANNOTATION);
         }
     }
@@ -85,9 +89,17 @@ public class MethodsConverter {
 
     }
 
+    private void removeAnnotation(PsiModifierList modifierList, String annotation){
+        for (PsiAnnotation psiAnnotation : modifierList.getAnnotations()) {
+            if(psiAnnotation.getText().equals("@"+annotation)){
+                psiAnnotation.delete();
+            }
+        }
+    }
+
     private boolean hasAnnotation(PsiAnnotation[] psiAnnotations, String annotationText){
         for (PsiAnnotation annotation : psiAnnotations) {
-            if(annotation.getText().equals(annotationText)){
+            if(annotation.getText().equals("@"+annotationText)){
                 return true;
             }
         }
