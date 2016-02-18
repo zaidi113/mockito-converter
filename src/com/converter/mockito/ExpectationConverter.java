@@ -3,9 +3,6 @@ package com.converter.mockito;
 import com.google.common.base.Optional;
 import com.intellij.openapi.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 
 /**
@@ -13,19 +10,27 @@ import static java.util.Arrays.asList;
  */
 public class ExpectationConverter implements MConverter{
 
+    private static final String THEN_THROW = "thenThrow";
+    private static final String THROW_EXCEPTION = "throwException";
+    private static final String THEN_RETURN = "thenReturn";
+    private static final String RETURN_VALUE = "returnValue";
+    private static final String WHEN = "when";
+    private static final String VERIFY = "verify";
+    private static final String WITH = "with";
+
     public Optional<ConversionResult> convert(String code){
 
         if(!code.contains(".method(")){
             return Optional.absent();
         }
 
-
         Pair<String, ConversionResult> objectNameBit = extractObjectName(code);
         Pair<String, ConversionResult> methodNameBit = extractMethodName(objectNameBit.first);
         Pair<String, ConversionResult> parametersBit = extractMethodParams(methodNameBit.first);
         Pair<String, ConversionResult> returnBit = extractReturn(parametersBit.first);
+        Pair<String, ConversionResult> throwClause = extractThrowClause(parametersBit.first);
 
-        String exp = (new StringBuilder("when").
+        String exp = (new StringBuilder(WHEN).
                 append("(").
                 append(objectNameBit.getSecond().getExpectation()).
                 append(".").
@@ -35,9 +40,10 @@ public class ExpectationConverter implements MConverter{
                 append(")").
                 append(")").
                 append(returnBit.getSecond().getExpectation()).
+                append(throwClause.getSecond().getExpectation()).
                 append(";").toString());
 
-        String ver = (new StringBuilder("verify").
+        String ver = (new StringBuilder(VERIFY).
                 append("(").
                 append(objectNameBit.getSecond().getExpectation()).
                 append(")").
@@ -54,23 +60,26 @@ public class ExpectationConverter implements MConverter{
 
     public static void main(String[] args) {
 
-        String line1 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\").with(eq(ANYTHING), ANYTHING, isA(\"TEST\")).will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
+        String line1 = "mockReferenceDataRepository.stubs().method(\"findStringTranslationForBbgDayCountAndDesc\")." + WITH + "(eq(ANYTHING), ANYTHING, isA(\"TEST\")).will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
         String line2 = "mockReferenceDataRepository.stubs().method(\"findDesc\").will(returnValue(new TranslationPair<String, Boolean>(\"AA\", true)));";
+        String line3 = "mockData.stubs().method(\"findDesc\").will(throwException(new RunTimeException(\"test\"));";
 //        String mockLine = "private Mock something = mock(Something.class, \"Blahhh\");";
         ExpectationConverter mockConverter = new ExpectationConverter();
 //
-        for (String jmock : asList(line1, line2)) {
+        for (String jmock : asList(line3)) {
             Optional<ConversionResult> resultOptional = mockConverter.convert(jmock);
             if(resultOptional.isPresent()){
                 System.out.println(resultOptional.get().getExpectation());
                 System.out.println(resultOptional.get().getVerification());
             }
         }
-
-
-        System.out.println(mockConverter.extractMethodParams("with(eq(some.method()), isA(anything))").getSecond().getExpectation());
     }
 
+    /**
+     * Extracts the mockName on which expectation is set.
+     * @param line .
+     * @return
+     */
     private Pair<String, ConversionResult> extractObjectName(String line){
 
         StringBuilder expectation = new StringBuilder();
@@ -115,27 +124,23 @@ public class ExpectationConverter implements MConverter{
      */
     private Pair<String, ConversionResult> extractMethodParams(String line){
 
-        if(!line.contains("with(")){
+        if(!line.contains(WITH + "(")){
             return emptyResult(line);
         }
-
-//        "with(eq(some.method()), isA(anything))"
 
         StringBuilder expectation = new StringBuilder();
         StringBuilder verification = new StringBuilder();
 
         //remove everything from start of method(
-        String[] splitStrings = line.split("with\\(");
+        String[] splitStrings = line.split(WITH + "\\(");
         if(splitStrings != null && splitStrings.length > 0){
 
             String stringWithParameters = splitStrings[1];
             if(stringWithParameters.charAt(0) == ')') //no parameters specified
                 return emptyResult(line);
 
-
             int paramIndex = 0;
 
-                boolean allParametersFound = false;
                 int beginParen = 1; //this is one because we have a bracket for with(.
                 StringBuilder paramBuilder = new StringBuilder();
 
@@ -155,7 +160,6 @@ public class ExpectationConverter implements MConverter{
                         paramBuilder.append(c);
                         paramIndex++;
                     }
-
                 }
 
                 expectation.append(paramBuilder.toString());
@@ -175,14 +179,32 @@ public class ExpectationConverter implements MConverter{
 
         StringBuilder expectation = new StringBuilder();
 
-        if(line.contains("returnValue")){
+        if(line.contains(RETURN_VALUE)){
             String stringWithReturnValue = line.split("returnValue\\(")[1];
-
-//            line = line.substring(stringWithReturnValue);
-//            line = line.substring(line.indexOf("("));
-
-            expectation.append(".thenReturn(");
+            expectation.append("." + THEN_RETURN + "(");
             expectation.append(readBetweenParenthesis(stringWithReturnValue));
+            expectation.append(")");
+
+        }
+        return buildResult(line, expectation, new StringBuilder());
+    }
+
+    /**
+     *
+     * @param line . incoming Mock Line
+     * @return remaining part of the original line.
+     */
+    private Pair<String, ConversionResult> extractThrowClause(String line){
+
+        StringBuilder expectation = new StringBuilder();
+        String willThrowToken = THROW_EXCEPTION + "(";
+
+        if(line.contains(willThrowToken)){
+
+            String subLine = line.substring(line.indexOf(willThrowToken)+willThrowToken.length());
+
+            expectation.append("." + THEN_THROW + "(");
+            expectation.append(readBetweenParenthesis(subLine));
             expectation.append(")");
 
         }
@@ -195,7 +217,7 @@ public class ExpectationConverter implements MConverter{
 
         int paranthesis = 1;
         int charCount=0;
-        while(paranthesis != 0) {
+        while(paranthesis != 0 && charCount < line.length()) {
 
             char c = line.charAt(charCount);
 
