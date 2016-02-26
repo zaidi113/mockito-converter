@@ -6,6 +6,8 @@ import com.intellij.psi.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.converter.mockito.ExpectationConverter.THEN_RETURN;
+import static com.converter.mockito.ExpectationConverter.THEN_THROW;
 import static java.util.Arrays.asList;
 
 /**
@@ -53,10 +55,15 @@ public class MethodsConverter {
             Optional<ConversionResult> conversionOptionalResult = expectationConverter.convert(bodyStatement.getText());
             if(conversionOptionalResult.isPresent()){
 
-                String expectation = conversionOptionalResult.get().getExpectation();
+                String stubbedStatement = conversionOptionalResult.get().getExpectation();
                 verifyStatements.add(conversionOptionalResult.get().getVerification());
-                //Replace the original expectation with Mockito expectation
-                bodyStatement.replace(elementFactory.createStatementFromText(expectation, method));
+
+                if(isNotRedundantStubbing(stubbedStatement)){
+                    //Replace the original expectation with Mockito expectation
+                    bodyStatement.replace(elementFactory.createStatementFromText(stubbedStatement, method));
+                }else {
+                    bodyStatement.delete();
+                }
             }
         }
         //verification should be added at the end of the method body
@@ -65,6 +72,10 @@ public class MethodsConverter {
         }
     }
 
+
+    private boolean isNotRedundantStubbing(String stubbedStatement){
+        return stubbedStatement.contains(THEN_RETURN) || stubbedStatement.contains(THEN_THROW);
+    }
 
     private void addAnnotations(PsiMethod method){
 

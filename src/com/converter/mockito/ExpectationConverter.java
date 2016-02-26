@@ -10,9 +10,9 @@ import static java.util.Arrays.asList;
  */
 public class ExpectationConverter implements MConverter{
 
-    private static final String THEN_THROW = "thenThrow";
+    public static final String THEN_THROW = "thenThrow";
+    public static final String THEN_RETURN = "thenReturn";
     private static final String THROW_EXCEPTION = "throwException";
-    private static final String THEN_RETURN = "thenReturn";
     private static final String RETURN_VALUE = "returnValue";
     private static final String WHEN = "when";
     private static final String VERIFY = "verify";
