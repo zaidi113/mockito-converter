@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b15094d8-4326-4296-8849-eebadcd7224d" name="Default" comment="removed abstract class conversion restriction + redundant stubs will not be generated instead only verifications">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/converter/mockito/ExpectationConverterTest.java" />
+    <list default="true" id="b15094d8-4326-4296-8849-eebadcd7224d" name="Default" comment="Tests Added">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MockitoConverterPlugin.jar" afterPath="$PROJECT_DIR$/MockitoConverterPlugin.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MockitoConverterPlugin.iml" afterPath="$PROJECT_DIR$/MockitoConverterPlugin.iml" />
     </list>
     <ignored path="MockitoConverterPlugin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,11 +63,9 @@
       <file leaf-file-name="ExpectationConverterTest.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/com/converter/mockito/ExpectationConverterTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6749226">
-              <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.18575852">
+              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -259,6 +256,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="testdata" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MockitoConverterPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MockitoConverterPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -278,10 +289,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mockito" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -854,11 +861,20 @@
       <option name="project" value="LOCAL" />
       <updated>1456520749496</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Tests Added">
+      <created>1456589317997</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1456589317997</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TestHistory">
     <history-entry file="ExpectationConverterTest - 2016.02.27 at 16h 05m 32s.xml">
+      <configuration name="ExpectationConverterTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ExpectationConverterTest - 2016.02.27 at 16h 09m 34s.xml">
       <configuration name="ExpectationConverterTest" configurationId="JUnit" />
     </history-entry>
     <history-entry file="ExpectationConverterTest_canConvertCodeWitMethodsParams - 2016.02.27 at 16h 05m 20s.xml">
@@ -875,9 +891,6 @@
     </history-entry>
     <history-entry file="ExpectationConverterTest_canConvertCodeWitReturnClause - 2016.02.27 at 16h 05m 14s.xml">
       <configuration name="ExpectationConverterTest.canConvertCodeWitReturnClause" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="ExpectationConverterTest_canConvertJmockToMockito - 2016.02.27 at 09h 36m 03s.xml">
-      <configuration name="ExpectationConverterTest.canConvertJmockToMockito" configurationId="JUnit" />
     </history-entry>
     <history-entry file="ExpectationConverterTest_canConvertJmockToMockito - 2016.02.27 at 09h 37m 51s.xml">
       <configuration name="ExpectationConverterTest.canConvertJmockToMockito" configurationId="JUnit" />
@@ -978,7 +991,8 @@
     <MESSAGE value="Changes correct modifiers to setUp and tearDown" />
     <MESSAGE value="Added support for thenThrow clause" />
     <MESSAGE value="removed abstract class conversion restriction + redundant stubs will not be generated instead only verifications" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed abstract class conversion restriction + redundant stubs will not be generated instead only verifications" />
+    <MESSAGE value="Tests Added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tests Added" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1396,11 +1410,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/converter/mockito/ExpectationConverterTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6749226">
-          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.18575852">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
